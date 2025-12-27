@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Paw Academy | Master Forensic Portal</title>
+    <style>
+        :root {
+            --cat-gold: #fbbf24; --deep-slate: #0f172a; --mint: #10b981; 
+            --psych-blue: #3b82f6; --crimson: #ef4444; --sky: #f0f9ff;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--sky); margin: 0; display: flex; color: #334155; scroll-behavior: smooth; }
+
+        /* Navigation Sidebar */
+        nav { width: 280px; background: var(--deep-slate); height: 100vh; position: fixed; padding: 25px; color: white; border-right: 6px solid var(--cat-gold); z-index: 100; overflow-y: auto; }
+        .logo-area { text-align: center; margin-bottom: 30px; }
+        .nav-links a { color: #cbd5e1; text-decoration: none; display: flex; align-items: center; padding: 12px; margin: 8px 0; border-radius: 12px; background: #1e293b; transition: 0.3s; }
+        .nav-links a:hover { background: var(--cat-gold); color: var(--deep-slate); transform: translateX(5px); }
+
+        /* Main Layout */
+        main { margin-left: 280px; padding: 30px; width: calc(100% - 280px); padding-bottom: 120px; }
+        .section-card { background: white; border-radius: 25px; padding: 30px; margin-bottom: 40px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-top: 5px solid var(--cat-gold); }
+        
+        /* Grid Systems */
+        .grid-4 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .topic-box { background: #fff; border: 3px solid #e2e8f0; border-radius: 20px; padding: 20px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .topic-box:hover { border-color: var(--cat-gold); transform: translateY(-3px); }
+        
+        .notes-panel { display: none; background: #fffdf5; border: 2px solid var(--cat-gold); border-radius: 20px; padding: 25px; margin-top: 20px; }
+        .btn-rev { background: var(--cat-gold); border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+        /* Stats & Analytics */
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; text-align: center; }
+        .stat-item { background: #f8fafc; padding: 15px; border-radius: 15px; border: 1px solid #e2e8f0; }
+
+        /* Assistant Bar */
+        #gemini-bar { position: fixed; bottom: 0; left: 280px; right: 0; background: white; border-top: 4px solid var(--psych-blue); padding: 15px 30px; display: flex; gap: 15px; z-index: 1000; box-shadow: 0 -5px 15px rgba(0,0,0,0.1); }
+        
+        .timeline-item { border-left: 3px solid var(--cat-gold); padding-left: 20px; margin-bottom: 20px; }
+        .cartoon-official { font-size: 2.5rem; margin-bottom: 10px; }
+
+        @media (max-width: 1024px) {
+            nav { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 5px solid var(--cat-gold); }
+            main { margin-left: 0; width: 100%; }
+            #gemini-bar { left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <div class="logo-area">
+        <div style="font-size: 3rem;">🐱</div>
+        <h2 style="color:var(--cat-gold);">GOLDEN PAW</h2>
+        <p><small>MSc Forensic Academy</small></p>
+    </div>
+    <div class="nav-links">
+        <a href="#academia">📚 Academia</a>
+        <a href="#mock-quiz">🧩 Mock Quiz</a>
+        <a href="#mock-test">📝 Mock Test</a>
+        <a href="#crime-zone">🔍 Crime Zone</a>
+    </div>
+</nav>
+
+<main>
+    <div id="study-reminder" style="display:none; background: var(--cat-gold); padding: 15px; border-radius: 15px; margin-bottom: 20px; font-weight: bold;">
+        🐾 Professor Whiskers: You've been away! Ready to dive back into the Crime Zone?
+    </div>
+
+    <section id="academia" class="section-card">
+        <h1>📚 Academia Vaults</h1>
+        <div class="grid-4">
+            <div class="topic-box" onclick="openVault('crim')">⚖️ <h4>Criminology & IPC</h4></div>
+            <div class="topic-box" onclick="openVault('psych')">🧠 <h4>Forensic Psych</h4></div>
+            <div class="topic-box" onclick="openVault('sci')">🧪 <h4>Forensic Science</h4></div>
+            <div class="topic-box" onclick="openVault('logic')">🧩 <h4>Logic & Analytics</h4></div>
+        </div>
+        <div id="vault-panel" class="notes-panel">
+            <button onclick="window.print()" style="float:right">Download PDF</button>
+            <h2 id="vault-header"></h2>
+            <div id="vault-body"></div>
+        </div>
+    </section>
+
+    <section id="mock-quiz" class="section-card" style="border-top-color: var(--psych-blue);">
+        <h1>🧩 Mock Quiz Centre</h1>
+        <div class="stat-grid">
+            <div class="stat-item">✅ <span id="w-corr">0</span></div>
+            <div class="stat-item">❌ <span id="w-wro">0</span></div>
+            <div class="stat-item">⏭️ <span id="w-skp">0</span></div>
+        </div>
+        <div id="quiz-setup">
+            <select id="q-subject" style="padding:10px; border-radius:10px;">
+                <option value="crim">Criminology</option>
+                <option value="sci">Forensic Science</option>
+                <option value="mixed">Mixed Subjects</option>
+            </select>
+            <input type="number" id="q-amount" value="5" style="width:50px; padding:10px;">
+            <button class="btn-rev" onclick="startQuiz()">Start Quiz</button>
+        </div>
+        <div id="quiz-active" style="display:none; text-align:center;">
+            <h3 id="q-title"></h3>
+            <p id="q-text" style="font-size:1.2rem;"></p>
+            <div id="q-options" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"></div>
+            <button onclick="skipQ()" class="btn-rev" style="background:#94a3b8; margin-top:20px;">Skip Question</button>
+        </div>
+    </section>
+
+    <section id="mock-test" class="section-card" style="border-top-color: var(--crimson);">
+        <h1>📝 NFAT Master Tests</h1>
+        <div class="grid-4">
+            <div class="topic-box" onclick="beginNfat(1)">🏆 Test 1 (90m)</div>
+            <div class="topic-box" onclick="beginNfat(2)">🏆 Test 2 (90m)</div>
+            <div class="topic-box" onclick="beginNfat(3)">🏆 Test 3 (90m)</div>
+            <div class="topic-box" onclick="showNfatAnalysis()">📊 Vault 4: Analysis</div>
+        </div>
+        <div id="nfat-display" style="display:none; margin-top:20px; padding:20px; border:2px solid var(--crimson); border-radius:15px;">
+            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                <span id="nfat-clock" style="color:var(--crimson)">90:00</span>
+                <span id="nfat-status">1/100</span>
+            </div>
+            <p id="nfat-question" style="font-size:1.1rem; padding:20px 0;"></p>
+            <div id="nfat-choices" style="display:grid; gap:10px;"></div>
+        </div>
+        <div id="nfat-history" class="notes-panel"></div>
+    </section>
+
+    <section id="crime-zone" class="section-card" style="border-top-color: var(--mint);">
+        <h1>🔍 Crime Zone</h1>
+        <div class="grid-4">
+            <div class="topic-box" onclick="loadCase('sci')">📂 Case: The Ghost Print</div>
+            <div class="topic-box" onclick="loadCase('crim')">📂 Case: BNS Shift</div>
+            <div class="topic-box" onclick="loadCase('mega')">📂 MEGA: Total Recall</div>
+        </div>
+        <div id="case-panel" class="notes-panel">
+            <div class="cartoon-official">👨‍⚖️</div>
+            <h3 id="c-name"></h3>
+            <div id="c-img"></div>
+            <p id="c-desc"></p>
+            <div id="c-action"></div>
+        </div>
+        <div style="text-align:center; margin-top:20px;">
+            <h4>🎖️ Earned Badges: <span id="badge-bin"></span></h4>
+        </div>
+    </section>
+</main>
+
+<div id="gemini-bar">
+    <div style="font-size:1.5rem;">🤖</div>
+    <input type="text" id="g-input" placeholder="Ask Gemini for assistance with forensic topics..." style="flex-grow:1; padding:10px; border-radius:10px; border:1px solid #ddd;">
+    <button class="btn-rev" style="background:var(--psych-blue); color:white;" onclick="geminiCall()">Ask AI</button>
+</div>
+
+<script>
+    // --- DATA ---
+    const qData = {
+        crim: [{q: "BNS replaces IPC. Which section handles murder now?", a: ["101", "302", "22", "300"], c: 0}],
+        sci: [{q: "What is the primary concern in Tertiary DNA transfer?", a: ["Direct contact", "Background shedding", "Lab hygiene", "Aerosol"], c: 1}]
+    };
+
+    const vaultData = {
+        crim: "<h3>Criminology Timeline</h3><div class='timeline-item'><span class='year-label'>1860</span> IPC Born.</div><div class='timeline-item'><span class='year-label'>2024</span> BNS Implementation.</div>",
+        sci: "<h3>Forensic Science Evolution</h3><div class='timeline-item'><span class='year-label'>1910</span> Locard's Exchange Principle.</div><div class='timeline-item'><span class='year-label'>1984</span> DNA Profiling.</div>"
+    };
+
+    // --- LOGIC ---
+    function openVault(v) {
+        document.getElementById('vault-panel').style.display = 'block';
+        document.getElementById('vault-header').innerText = v.toUpperCase() + " VAULT";
+        document.getElementById('vault-body').innerHTML = vaultData[v] || "Content loading...";
+    }
+
+    function startQuiz() {
+        document.getElementById('quiz-setup').style.display = 'none';
+        document.getElementById('quiz-active').style.display = 'block';
+        renderQuizQ();
+    }
+
+    function renderQuizQ() {
+        const pool = qData.crim; // Simplified
+        const q = pool[0];
+        document.getElementById('q-title').innerText = "Question";
+        document.getElementById('q-text').innerText = q.q;
+        const opts = document.getElementById('q-options');
+        opts.innerHTML = '';
+        q.a.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-rev';
+            btn.innerText = opt;
+            btn.onclick = () => { alert("Saved to Weekly Stats!"); resetQuiz(); };
+            opts.appendChild(btn);
+        });
+    }
+
+    function resetQuiz() {
+        document.getElementById('quiz-setup').style.display = 'block';
+        document.getElementById('quiz-active').style.display = 'none';
+    }
+
+    function loadCase(t) {
+        document.getElementById('case-panel').style.display = 'block';
+        document.getElementById('c-name').innerText = "Forensic Field Case";
+        document.getElementById('c-img').innerHTML = "";
+        document.getElementById('c-desc').innerText = "Identify the discrepancy in the evidence log.";
+        document.getElementById('c-action').innerHTML = "<button class='btn-rev' onclick='addBadge(\"🎖️\")'>Submit Evidence</button>";
+    }
+
+    function addBadge(b) {
+        document.getElementById('badge-bin').innerText += " " + b;
+        alert("Judge Paws has awarded you a certificate! 🐾");
+    }
+
+    function geminiCall() {
+        const q = document.getElementById('g-input').value;
+        if(q) alert("Gemini Assistant is untangling: " + q);
+        document.getElementById('g-input').value = '';
+    }
+
+    window.onload = () => {
+        const last = localStorage.getItem('last_seen');
+        if(last && (Date.now() - last > 86400000)) document.getElementById('study-reminder').style.display = 'block';
+        localStorage.setItem('last_seen', Date.now());
+    };
+</script>
+</body>
+</html>
